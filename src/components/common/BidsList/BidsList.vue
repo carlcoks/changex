@@ -989,7 +989,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                 variant="elevated"
                 color="#04B6F5"
                 :disabled="!bidOnConfirm.receipt"
-                @click="confirmTakenBid(bidOnTake.id)"
+                @click="confirmTakenBid(bidOnConfirm.id)"
             >
                 <span class="tw-tracking-normal tw-normal-case tw-text-white">Подтвердить</span>
             </v-btn>
