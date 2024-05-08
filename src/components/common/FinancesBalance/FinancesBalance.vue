@@ -33,7 +33,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <RenderOn :px="1280">
+    <RenderOn :px="840">
         <v-card class="tw-w-full tw-h-[132px] !tw-rounded-2xl !tw-p-[24px] tw-mb-6 dark:tw-bg-dark-panel">
             <section class="tw-flex tw-justify-between tw-items-center">
                 <section class="tw-flex tw-items-center tw-gap-x-8">

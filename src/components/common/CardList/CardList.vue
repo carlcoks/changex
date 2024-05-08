@@ -26,7 +26,7 @@ const cardErrorSnackbar = reactive({
 
 const cardsStore = useCardsStore()
 const deviceStore = useDevicesStore()
-const { loading, hasItems, itemsAll, lastPage } = storeToRefs(cardsStore)
+const { loading, itemsAll, lastPage } = storeToRefs(cardsStore)
 const { filteredDeviceList } = storeToRefs(deviceStore)
 
 const newCardForm = ref<HTMLFormElement>(null)
@@ -525,8 +525,8 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
     </RenderOn>
 
     <RenderOn :px="840">
-        <v-card v-if="hasItems" class="!tw-rounded-2xl tw-mb-6">
-            <v-data-table :headers="headers" :items="itemsAll" :footer="false" :loading="loading">
+        <v-card class="!tw-rounded-2xl tw-mb-6">
+            <v-data-table :headers="headers" :items="itemsAll" :footer="false" :loading="loading" hide-no-data>
                 <template v-slot:headers="{ columns }">
                     <tr>
                         <template v-for="column in columns" :key="column.key">
@@ -741,7 +741,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
             </v-btn>
     </RenderOn>
     
-    <section v-if="!loading && itemsAll.length === 0 && !hasItems" class="tw-flex tw-flex-col tw-justify-center tw-items-center tw-w-full tw-h-[calc(100vh-400px)]">
+    <section v-if="!loading && itemsAll.length === 0" class="tw-flex tw-flex-col tw-justify-center tw-items-center tw-w-full tw-h-[calc(100vh-400px)]">
         <div class="tw-text-center">
             <Stars /><br>
             <span class="tw-text-lg tw-text-[#677483] tw-font-semibold">Карты отсутствуют</span>

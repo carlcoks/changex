@@ -8,7 +8,6 @@ export const usePaymentsStore = defineStore('payments', {
     paymentsList: [] as any,
     disputsList: [] as any,
     loading: true,
-    hasItems: true,
     awaitingItems: 0 as number,
     page: 1,
     lastPage: 1,
@@ -85,14 +84,8 @@ export const usePaymentsStore = defineStore('payments', {
       this.offset = res?.data.offset
       this.totalCount = res?.data.totalCount
       this.lastPage = res?.data.lastPage
-      if (this.paymentsList.length === 0) {
-        this.hasItems = false
-      } else {
-        this.hasItems = true
-      }
-
-      console.log(this.paymentsList)
     },
+
     async loadMorePayments(options: TFilterPaginationOptions) {
       this.showLoading()
 
@@ -104,17 +97,13 @@ export const usePaymentsStore = defineStore('payments', {
       this.offset = res?.data.offset
       this.totalCount = res?.data.totalCount
       this.lastPage = res?.data.lastPage
-
-      if (this.paymentsList.length === 0) {
-        this.hasItems = false
-      } else {
-        this.hasItems = true
-      }
     },
+
     async fetchDisputeById(id: string) {
       const res = await getCurrentDispute(id)
       return res?.data.payment
     },
+
     async fetchDisputs(options: TFilterPaginationOptions) {
       this.showLoading()
 
@@ -125,14 +114,8 @@ export const usePaymentsStore = defineStore('payments', {
       this.offset = res?.data.offset
       this.totalCount = res?.data.totalCount
       this.lastPage = res?.data.lastPage
-
-      if (this.disputsList.length === 0) {
-        this.hasItems = false
-      } else {
-        this.hasItems = true
-      }
-      console.log(this.disputsList)
     },
+
     async loadMoreDisputs(options: TFilterPaginationOptions) {
       this.showLoading()
 
@@ -144,33 +127,31 @@ export const usePaymentsStore = defineStore('payments', {
       this.offset = res?.data.offset
       this.totalCount = res?.data.totalCount
       this.lastPage = res?.data.lastPage
-
-      if (this.disputsList.length === 0) {
-        this.hasItems = false
-      } else {
-        this.hasItems = true
-      }
     },
+
     async approveDisputByID(id: string) {
       const res = await approveDisput(id)
       
       const idx = this.disputsList.findIndex((disput) => disput.paymentId === id)
-      console.log(res)
       this.disputsList[idx] = res?.data.payment
     },
+
     async cancelDisputByID(id: string) {
       const res = await cancelDisput(id)
 
       const idx = this.disputsList.findIndex((disput) => disput.paymentId === id)
       this.disputsList[idx] = res?.data.payment
     },
+
     async fetchAwaitingDisputesCount() {
       const res = await getAwaitingDisputesCount()
       this.awaitingItems = res?.data.count
     },
+
     showLoading() {
       this.loading = true
     },
+
     hideLoading() {
       this.loading = false
     }

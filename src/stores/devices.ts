@@ -8,7 +8,6 @@ export const useDevicesStore = defineStore('devices', {
     filteredDeviceList: [],
     qr: '',
     loading: true,
-    hasItems: true,
     isTempTokenGet: false,
     page: 1,
     lastPage: 1,
@@ -37,6 +36,7 @@ export const useDevicesStore = defineStore('devices', {
       const res = await getDeviceId(id)
       return res?.data.device
     },
+
     async fetchDevices(options: TFilterPaginationOptions) {
       this.showLoading()
 
@@ -47,19 +47,13 @@ export const useDevicesStore = defineStore('devices', {
       this.offset = res?.data.offset
       this.totalCount = res?.data.totalCount
       this.lastPage = res?.data.lastPage
-
-      if (this.deviceList.length === 0) {
-        this.hasItems = false
-      } else {
-        this.hasItems = true
-      }
-
-      console.log(this.deviceList)
     },
+
     async fetchFilteredDevices() {
       const res = await getFilteredDevices()
       this.filteredDeviceList = res?.data.devices
     },
+
     async loadMoreDevices(options: TFilterPaginationOptions) {
       this.showLoading()
 
@@ -71,25 +65,20 @@ export const useDevicesStore = defineStore('devices', {
       this.offset = res?.data.offset
       this.totalCount = res?.data.totalCount
       this.lastPage = res?.data.lastPage
-
-      if (this.deviceList.length === 0) {
-        this.hasItems = false
-      } else {
-        this.hasItems = true
-      }
     },
+
     async loadQR() {
       const res = await getTempToken()
       this.qr = res?.data.qr
-      console.log(res)
-      console.log(this.qr)
     },
+
     async checkToken() {
       const res = await checkTempToken()
       if (res?.data.status === 'done') {
         this.isTempTokenGet = true
       }
     },
+
     async saveEditDevice(edited: Record<string, unknown>) {
       this.showLoading()
       
@@ -112,13 +101,16 @@ export const useDevicesStore = defineStore('devices', {
       
       this.deviceList[idx] = newDevice?.data.device
     },
+    
     async removeDevice(id: string) {
       this.deviceList = this.deviceList.filter((device) => device.deviceId !== id)
       await deleteDevice(id)
     },
+
     showLoading() {
       this.loading = true
     },
+    
     hideLoading() {
       this.loading = false
     }

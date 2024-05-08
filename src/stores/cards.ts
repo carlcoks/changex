@@ -25,7 +25,6 @@ export const useCardsStore = defineStore('cards', {
     bankList: [],
     cardsList: [] as any,
     loading: true,
-    hasItems: true,
     page: 1,
     lastPage: 1,
     offset: 1,
@@ -70,10 +69,9 @@ export const useCardsStore = defineStore('cards', {
         const res = await getCards({ search })
         return res?.data.list[0] ? true : false 
     },
+
     async checkCardNotCurrent(search: string, currentUid: string) {
         const res = await getCards({ search })
-
-        console.log(res)
 
         if (res?.data && res.data.list.length > 0) {
             return res?.data.list[0].uid !== currentUid ? true : false
@@ -83,10 +81,12 @@ export const useCardsStore = defineStore('cards', {
         
         // return res?.data.list && res?.data.list[0].uid !== currentUid ? true : false
     },
+
     async fetchCardByUID(uid: string) {
         const res = await getCardByUID(uid)
         return res?.data.card
     },
+
     async saveEditCard(editedCard: Record<string, unknown>) {
         this.showLoading()
 
@@ -107,10 +107,12 @@ export const useCardsStore = defineStore('cards', {
 
         return res
     },
+
     async removeCard(uid: string) {
         this.cardsList = this.cardsList.filter((card) => card.uid !== uid)
         await deleteCard(uid)
     },
+
     async fetchCards(options: TFilterPaginationOptions) {
       this.showLoading()
 
@@ -121,15 +123,8 @@ export const useCardsStore = defineStore('cards', {
       this.offset = res?.data.offset
       this.totalCount = res?.data.totalCount
       this.lastPage = res?.data.lastPage
-
-      if (this.cardsList.length === 0) {
-        this.hasItems = false
-      } else {
-        this.hasItems = true
-      }
-
-      console.log(this.cardsList)
     },
+
     async loadMoreCards(options: TFilterPaginationOptions) {
       this.showLoading()
 
@@ -141,13 +136,8 @@ export const useCardsStore = defineStore('cards', {
       this.offset = res?.data.offset
       this.totalCount = res?.data.totalCount
       this.lastPage = res?.data.lastPage
-
-      if (this.cardsList.length === 0) {
-        this.hasItems = false
-      } else {
-        this.hasItems = true
-      }
     },
+
     async createCard(newCard: Record<string, unknown>) {
         this.showLoading()
 
@@ -162,6 +152,7 @@ export const useCardsStore = defineStore('cards', {
 
         this.cardsList.unshift(res?.data.card)
     },
+
     async toggleCard(uid: string, isSwitched: boolean) {
         if (isSwitched) {
             const res = await setShutdownCard(uid)
@@ -178,6 +169,7 @@ export const useCardsStore = defineStore('cards', {
             }
         }
     },
+
     async fetchBanks() {
         const res = await getBanks()
         this.bankList = res?.data.banks
@@ -187,9 +179,11 @@ export const useCardsStore = defineStore('cards', {
         //     return newItem
         // })
     },
+
     showLoading() {
         this.loading = true
     },
+    
     hideLoading() {
         this.loading = false
     }

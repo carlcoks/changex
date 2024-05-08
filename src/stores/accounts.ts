@@ -8,7 +8,6 @@ export const useAccountStore = defineStore('accounts', {
     accountsList: [] as any,
     code: '',
     loading: true,
-    hasItems: true,
     page: 1,
     lastPage: 1,
     offset: 1,
@@ -41,15 +40,8 @@ export const useAccountStore = defineStore('accounts', {
       this.offset = res?.data.offset
       this.totalCount = res?.data.totalCount
       this.lastPage = res?.data.lastPage
-
-      if (this.accountsList.length === 0) {
-        this.hasItems = false
-      } else {
-        this.hasItems = true
-      }
-
-      console.log(this.accountsList)
     },
+
     async loadMoreAccounts(options: TFilterPaginationOptions) {
       this.showLoading()
       
@@ -61,17 +53,13 @@ export const useAccountStore = defineStore('accounts', {
       this.offset = res?.data.offset
       this.totalCount = res?.data.totalCount
       this.lastPage = res?.data.lastPage
-
-      if (this.accountsList.length === 0) {
-        this.hasItems = false
-      } else {
-        this.hasItems = true
-      }
     },
+
     async getConnectCode() {
       const res = await getAccountCode()
       this.code = res?.data.code
     },
+
     async saveEditAccount(edited: Record<string, unknown>) {
       this.showLoading()
       
@@ -90,13 +78,16 @@ export const useAccountStore = defineStore('accounts', {
 
       this.accountsList[idx] = newAccount
     },
+
     async removeAccount(uid: string) {
       this.accountsList = this.accountsList.filter((account) => account.uid !== uid)
       await deleteAccount(uid)
     },
+
     showLoading() {
       this.loading = true
     },
+    
     hideLoading() {
       this.loading = false
     }

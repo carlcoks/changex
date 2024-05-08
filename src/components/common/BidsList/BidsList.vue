@@ -23,7 +23,7 @@ const route = useRoute()
 const tab = ref(null)
 
 const bidsStore = useBidsStore()
-const { loading, hasItems, bidsItemsAll, bidsItemsUser, lastPage } = storeToRefs(bidsStore)
+const { loading, bidsItemsAll, bidsItemsUser, lastPage } = storeToRefs(bidsStore)
 
 const searchModel = ref('')
 const searchQuery = ref('')
@@ -35,6 +35,7 @@ const mobileFilter = ref(false)
 const takeBidDialog = ref(false)
 const cancelBidDialog = ref(false)
 const confirmTakenBidDialog = ref(false)
+const isLoadingBtn = ref(false)
 
 const datepicker = ref<DatePickerInstance>(null)
 
@@ -341,8 +342,10 @@ async function openOnTakeBid(bid: Record<string, unknown>) {
     bidOnTake.isEditable = false
 
     bidOnTake.id = bid.id as string
-    bidOnTake.method = bid.method.methodValue as string
+    bidOnTake.methodValue = bid.method.methodValue as string
+    bidOnTake.methodBank = bid.method.methodBank as string
     bidOnTake.paymentSum = bid.paymentSum as number
+    bidOnTake.sumUSDT = bid.sumUSDT as number
 
     takeBidDialog.value = true
     bidOnTake.isEditable = true
@@ -352,8 +355,10 @@ async function openOnConfirmBid(bid: Record<string, unknown>) {
     bidOnConfirm.isEditable = false
 
     bidOnConfirm.id = bid.id as string
-    bidOnConfirm.method = bid.method as string
+    bidOnConfirm.methodValue = bid.method.methodValue as string
+    bidOnConfirm.methodBank = bid.method.methodBank as string
     bidOnConfirm.paymentSum = bid.paymentSum as number
+    bidOnConfirm.sumUSDT = bid.sumUSDT as number
     bidOnConfirm.requisites = bid.requisites as string
 
     confirmTakenBidDialog.value = true
@@ -382,30 +387,48 @@ function removeReceipt() {
     bidOnConfirm.receiptDataURL = ''
 }
 
-function confirmTakenBid(id: string) {
-    bidsStore.confirmUserBid(id, bidOnConfirm).then((res) => {
-        if (res.response) {
-            bidErrorSnackbar.text = res.response.data.msg
-            bidErrorSnackbar.show = true
-        }
-    })
+const confirmTakenBid = async (id: string) => {
+    isLoadingBtn.value = true
+
+    const res = await bidsStore.confirmUserBid(id, bidOnConfirm)
+    
+    isLoadingBtn.value = false
+
+    if (res.response) {
+        bidErrorSnackbar.text = res.response.data.msg
+        bidErrorSnackbar.show = true
+
+        return
+    }
 
     closeConfirmBidDialog()
+    fetchData()
 }
 
-function confirmBidTake(id: string) {
-    bidsStore.takeBidAction(id).then((res) => {
-        if (res.response) {
-            bidErrorSnackbar.text = res.response.data.msg
-            bidErrorSnackbar.show = true
-        }
-    })
+const confirmBidTake = async (id: string) => {
+    isLoadingBtn.value = true
+
+    const res = await bidsStore.takeBidAction(id)
     
+    isLoadingBtn.value = false
+    
+    if (res.response) {
+        bidErrorSnackbar.text = res.response.data.msg
+        bidErrorSnackbar.show = true
+
+        return
+    }
+
     takeBidDialog.value = false
 }
 
-async function confirmBidCancel(id: string) {
+const confirmBidCancel = async (id: string) => {
+    isLoadingBtn.value = true
+
     await bidsStore.cancelUserBidByID(id)
+
+    isLoadingBtn.value = false
+
     cancelBidDialog.value = false
 }
 
@@ -421,9 +444,7 @@ function closeConfirmBidDialog() {
     confirmTakenBidDialog.value = false
 }
 
-function setDate() {
-    console.log(date.value)
-    
+function setDate() {    
     if (datepicker.value) {
         datepicker.value.selectDate()
 
@@ -604,7 +625,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                 >
             </v-tabs>
 
-            <v-card-text v-if="hasItems">
+            <v-card-text>
                 <v-window v-model="tab">
                     <v-window-item value="one" @group:selected="fetchData">
                         <v-data-table
@@ -612,6 +633,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                             :items="bidsItemsAll"
                             :footer="false"
                             :loading="loading"
+                            hide-no-data
                         >
                             <template v-slot:headers="{ columns }">
                                 <tr>
@@ -663,8 +685,10 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                                 </tr>
                             </template>
                             <template v-slot:item.method="{ value }">
-                                <span class="tw-text-[15px]">{{ value.methodValue }}</span>
-                                <span class="tw-text-[15px]">{{ value.methodBank }}</span>
+                                <div class="d-flex flex-column">
+                                    <span class="tw-text-[15px]">{{ value.methodValue }}</span>
+                                    <span class="tw-text-[15px] text-grey">{{ value.methodBank }}</span>
+                                </div>
                             </template>
                             <template v-slot:item.bidSum="{ value }">
                                 <span class="tw-text-[15px]">{{ value }}</span>
@@ -675,6 +699,14 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                                         formatter.format(value)
                                     }}</span>
                                     <span class="tw-ml-2 tw-text-[13px] tw-text-gray-dark">RUB</span></span
+                                >
+                            </template>
+                            <template v-slot:item.sumUSDT="{ value }">
+                                <span
+                                    ><span class="tw-text-[15px]">{{
+                                        formatter.format(value)
+                                    }}</span>
+                                    <span class="tw-ml-2 tw-text-[13px] tw-text-gray-dark">USDT</span></span
                                 >
                             </template>
                             <template v-slot:item.bidTake="{ value, index }">
@@ -708,6 +740,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                             :items="bidsItemsUser"
                             :footer="false"
                             :loading="loading"
+                            hide-no-data
                         >
                             <template v-slot:headers="{ columns }">
                                 <tr>
@@ -868,17 +901,31 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                     Подтвердите перевод средств
                 </span>
             </div>
+
             <section class="tw-w-full" v-if="bidOnConfirm.isEditable">
                 <div class="tw-flex tw-flex-col tw-gap-y-4 light:tw-bg-[#F8FCFE] dark:tw-bg-dark
                         tw-border-solid tw-border-[1px] tw-border-[#E0E4E8]
-                        tw-rounded-xl tw-p-4 tw-w-full tw-mb-5">
+                        tw-rounded-xl tw-p-4 tw-w-full tw-mb-5"
+                >
                     <div class="tw-flex tw-justify-between tw-text-[15px]">
-                        <span>Метод</span>
-                        <span>{{ bidOnConfirm.method }}</span>
+                        <span>ID</span>
+                        <span>{{ bidOnConfirm.id }}</span>
                     </div>
                     <div class="tw-flex tw-justify-between tw-text-[15px]">
-                        <span>Сумма</span>
+                        <span>Метод</span>
+                        <span>{{ bidOnConfirm.methodValue }}</span>
+                    </div>
+                    <div class="tw-flex tw-justify-between tw-text-[15px]">
+                        <span>Банк</span>
+                        <span>{{ bidOnConfirm.methodBank }}</span>
+                    </div>
+                    <div class="tw-flex tw-justify-between tw-text-[15px]">
+                        <span>Сумма оплаты</span>
                         <span>{{ bidOnConfirm.paymentSum }} <span class="tw-text-gray-dark">RUB</span></span>
+                    </div>
+                    <div class="tw-flex tw-justify-between tw-text-[15px]">
+                        <span>Сумма USDT</span>
+                        <span>{{ bidOnConfirm.sumUSDT }} <span class="tw-text-gray-dark">USDT</span></span>
                     </div>
                 </div>
                 <span>Реквизиты:</span>
@@ -890,15 +937,19 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                 <input
                     type="file"
                     name="file"
-                    id="file"
+                    id="bidOnConfirm-receipt"
                     class="tw-hidden"
-                    accept="image/jpeg image/png"
+                    accept="image/jpeg, image/png"
                     @change="loadReceipt($event)"
                 >
-                <label v-if="!bidOnConfirm.receipt" for="file" class="tw-flex tw-flex-col tw-justify-center
-                                        tw-items-center tw-w-full tw-bg-gray-light
-                                        tw-border-[1px] tw-border-blue-primary tw-border-dashed tw-rounded-xl
-                                        tw-h-[80px] tw-cursor-pointer hover:tw-bg-gray-mid">
+                <label
+                    v-if="!bidOnConfirm.receipt"
+                    for="bidOnConfirm-receipt"
+                    class="tw-flex tw-flex-col tw-justify-center
+                            tw-items-center tw-w-full tw-bg-gray-light
+                            tw-border-[1px] tw-border-blue-primary tw-border-dashed tw-rounded-xl
+                            tw-h-[80px] tw-cursor-pointer hover:tw-bg-gray-mid"
+                >
                     <div class="tw-flex tw-items-center tw-gap-x-2">
                         <Download /> <span class="tw-text-blue-primary">Загрузите чек</span>
                     </div>
@@ -932,7 +983,14 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                     color="#04B6F5"
                 ></v-progress-circular>
             </div>
-            <v-btn class="!tw-rounded-xl !tw-h-[50px] tw-w-full tw-mt-5" variant="elevated" color="#04B6F5" :disabled="!bidOnConfirm.receipt" @click="confirmTakenBid(bidOnTake.id)">
+            <v-btn
+                :loading="isLoadingBtn"
+                class="!tw-rounded-xl !tw-h-[50px] tw-w-full tw-mt-5"
+                variant="elevated"
+                color="#04B6F5"
+                :disabled="!bidOnConfirm.receipt"
+                @click="confirmTakenBid(bidOnTake.id)"
+            >
                 <span class="tw-tracking-normal tw-normal-case tw-text-white">Подтвердить</span>
             </v-btn>
             <v-btn class="!tw-rounded-xl !tw-h-[50px] tw-w-full tw-mt-5" variant="outlined" color="#04B6F5" @click="closeConfirmBidDialog">
@@ -949,16 +1007,31 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                     Подтвердите принятие откупа
                 </span>
             </div>
-            <div v-if="bidOnTake.isEditable" class="tw-flex tw-flex-col tw-gap-y-4 light:tw-bg-[#F8FCFE] dark:tw-bg-dark
+            <div
+                v-if="bidOnTake.isEditable"
+                class="tw-flex tw-flex-col tw-gap-y-4 light:tw-bg-[#F8FCFE] dark:tw-bg-dark
                         tw-border-solid tw-border-[1px] tw-border-[#E0E4E8]
-                        tw-rounded-xl tw-p-4 tw-w-full tw-mb-5">
+                        tw-rounded-xl tw-p-4 tw-w-full tw-mb-5"
+            >
                 <div class="tw-flex tw-justify-between tw-text-[15px]">
-                    <span>Метод</span>
-                    <span>{{ bidOnTake.method }}</span>
+                    <span>ID</span>
+                    <span>{{ bidOnTake.id }}</span>
                 </div>
                 <div class="tw-flex tw-justify-between tw-text-[15px]">
-                    <span>Сумма</span>
+                    <span>Метод</span>
+                    <span>{{ bidOnTake.methodValue }}</span>
+                </div>
+                <div class="tw-flex tw-justify-between tw-text-[15px]">
+                    <span>Банк</span>
+                    <span>{{ bidOnTake.methodBank }}</span>
+                </div>
+                <div class="tw-flex tw-justify-between tw-text-[15px]">
+                    <span>Сумма оплаты</span>
                     <span>{{ bidOnTake.paymentSum }} <span class="tw-text-gray-dark">RUB</span></span>
+                </div>
+                <div class="tw-flex tw-justify-between tw-text-[15px]">
+                    <span>Сумма USDT</span>
+                    <span>{{ bidOnTake.sumUSDT }} <span class="tw-text-gray-dark">USDT</span></span>
                 </div>
             </div>
             <div v-else class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-gap-y-4 tw-bg-[#F8FCFE] dark:tw-bg-dark
@@ -970,7 +1043,13 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                     color="#04B6F5"
                 ></v-progress-circular>
             </div>
-            <v-btn class="!tw-rounded-xl !tw-h-[50px] tw-w-full tw-mt-5" variant="elevated" color="#04B6F5" @click="confirmBidTake(bidOnTake.id)">
+            <v-btn
+                :loading="isLoadingBtn"
+                class="!tw-rounded-xl !tw-h-[50px] tw-w-full tw-mt-5"
+                variant="elevated"
+                color="#04B6F5"
+                @click="confirmBidTake(bidOnTake.id)"
+            >
                 <span class="tw-tracking-normal tw-normal-case tw-text-white">Подтвердить</span>
             </v-btn>
             <v-btn class="!tw-rounded-xl !tw-h-[50px] tw-w-full tw-mt-5" variant="outlined" color="#04B6F5" @click="closeTakeBidDialog">
@@ -1016,7 +1095,13 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                     color="#04B6F5"
                 ></v-progress-circular>
             </div>
-            <v-btn class="!tw-rounded-xl !tw-h-[50px] tw-w-full tw-mt-5" variant="elevated" color="#EF4B27" @click="confirmBidCancel(bidOnCancel.id)">
+            <v-btn
+                :loading="isLoadingBtn"
+                class="!tw-rounded-xl !tw-h-[50px] tw-w-full tw-mt-5"
+                variant="elevated"
+                color="#EF4B27"
+                @click="confirmBidCancel(bidOnCancel.id)"
+            >
                 <span class="tw-tracking-normal tw-normal-case tw-text-white">Подтвердить</span>
             </v-btn>
             <v-btn class="!tw-rounded-xl !tw-h-[50px] tw-w-full tw-mt-5" variant="outlined" color="#04B6F5" @click="closeCancelBidDialog">
@@ -1043,7 +1128,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
             >
         </v-tabs>
 
-        <v-window v-if="!loading && hasItems" v-model="tab">
+        <v-window v-if="!loading" v-model="tab">
             <v-window-item value="one" @group:selected="fetchData">
                 <section
                     class="tw-flex tw-justify-between tw-items-center tw-w-full tw-mb-2 tw-mt-2"
@@ -1205,10 +1290,8 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                                                             :time="item.status.timeout"
                                                             v-slot="{ minutes, seconds }"
                                                         >
-                                                            {{ minutes.toString().padStart(2, '0') }}:{{
-                                                                seconds.toString().padStart(2, '0')
-                                                            }}</vue-countdown
-                                                        >
+                                                            {{ minutes.toString().padStart(2, '0') }}:{{ seconds.toString().padStart(2, '0') }}
+                                                        </vue-countdown>
                                                     </span>
                                                 </div>
                                                 <v-menu>
@@ -1421,7 +1504,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
 
     <RenderOn :px="840">
         <v-pagination
-            v-if="bidsItemsUser.length === 0 || bidsItemsAll.length === 0"
+            v-if="bidsItemsUser.length !== 0 || bidsItemsAll.length !== 0"
             class="tw-self-start"
             v-model="page"
             :length="lastPage"

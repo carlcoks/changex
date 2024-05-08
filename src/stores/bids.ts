@@ -8,7 +8,6 @@ export const useBidsStore = defineStore('bids', {
     bidsAllList: [] as any,
     bidsUserList: [] as any,
     loading: true,
-    hasItems: true,
     page: 1,
     lastPage: 1,
     offset: 1,
@@ -63,14 +62,8 @@ export const useBidsStore = defineStore('bids', {
       this.offset = res?.data.offset
       this.totalCount = res?.data.totalCount
       this.lastPage = res?.data.lastPage
-      if (this.bidsUserList.length === 0 && this.bidsAllList.length === 0) {
-        this.hasItems = false
-      } else {
-        this.hasItems = true
-      }
-
-      console.log(this.bidsAllList)
     },
+
     async loadMoreBids(options: TFilterPaginationOptions) {
       this.showLoading()
 
@@ -82,13 +75,8 @@ export const useBidsStore = defineStore('bids', {
       this.offset = res?.data.offset
       this.totalCount = res?.data.totalCount
       this.lastPage = res?.data.lastPage
-
-      if (this.bidsUserList.length === 0 && this.bidsAllList.length === 0) {
-        this.hasItems = false
-      } else {
-        this.hasItems = true
-      }
     },
+
     async fetchUserBids(options: TFilterPaginationOptions) {
         this.showLoading()
         
@@ -99,14 +87,8 @@ export const useBidsStore = defineStore('bids', {
         this.offset = res?.data.offset
         this.totalCount = res?.data.totalCount
         this.lastPage = res?.data.lastPage
-        if (this.bidsUserList.length === 0 && this.bidsAllList.length === 0) {
-          this.hasItems = false
-        } else {
-          this.hasItems = true
-        }
-  
-        console.log(this.bidsUserList)
     },
+
     async loadMoreUserBids(options: TFilterPaginationOptions) {
         this.showLoading()
   
@@ -118,13 +100,8 @@ export const useBidsStore = defineStore('bids', {
         this.offset = res?.data.offset
         this.totalCount = res?.data.totalCount
         this.lastPage = res?.data.lastPage
-  
-        if (this.bidsUserList.length === 0 && this.bidsAllList.length === 0) {
-          this.hasItems = false
-        } else {
-          this.hasItems = true
-        }
     },
+
     async takeBidAction(id: string) {
       const res = await takeBid(id)
 
@@ -132,6 +109,7 @@ export const useBidsStore = defineStore('bids', {
       
       return res
     },
+
     async confirmUserBid(id: string, bid: Record<string, unknown>) {
       const res = await confirmTakenBid(id, bid)
 
@@ -139,14 +117,17 @@ export const useBidsStore = defineStore('bids', {
       this.bidsUserList[idx] = res?.data.bid
 
       return res
-    }, 
+    },
+
     async cancelUserBidByID(id: string) {
       const res = await cancelUserBid(id)
       this.bidsUserList = this.bidsUserList.filter((bid) => bid.uid !== id)
     },
+
     showLoading() {
       this.loading = true
     },
+
     hideLoading() {
       this.loading = false
     }

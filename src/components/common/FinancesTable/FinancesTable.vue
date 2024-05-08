@@ -15,7 +15,7 @@ const props = defineProps<{
 }>()
 
 const financesStore = useFinancesStore()
-const { loading, lastPage, hasItems, itemsAll, itemsDeposit, itemsWithdrawal } = storeToRefs(financesStore)
+const { loading, lastPage, itemsAll, itemsDeposit, itemsWithdrawal } = storeToRefs(financesStore)
 
 const userStore = useUserStore()
 
@@ -167,10 +167,10 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
             <v-tab value="three" color="blue" width="33.3%" class="!tw-normal-case !tw-tracking-normal">Списания</v-tab>
         </v-tabs>
 
-        <v-card-text v-if="hasItems">
+        <v-card-text>
             <v-window v-model="tab">
                 <v-window-item value="one">
-                    <v-data-table :headers="headers" :items="itemsAll" :footer='false' :loading="loading">
+                    <v-data-table :headers="headers" :items="itemsAll" :footer='false' :loading="loading" hide-no-data>
                         <template v-slot:item.direction="{ value }">
                             <ArrowUpRight v-if="value === 'deposit'" />
                             <ArrowDownLeft v-if="value === 'withdrawal'" />
@@ -234,7 +234,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                 </v-window-item>
 
                 <v-window-item value="two">
-                    <v-data-table :headers="headers" :items="itemsDeposit" :loading="loading">
+                    <v-data-table :headers="headers" :items="itemsDeposit" :loading="loading" hide-no-data>
                         <template v-slot:item.direction="{ value }">
                             <ArrowUpRight v-if="value === 'deposit'" />
                             <ArrowDownLeft v-if="value === 'withdrawal'" />
@@ -298,7 +298,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                 </v-window-item>
 
                 <v-window-item value="three">
-                    <v-data-table :headers="headers" :items="itemsWithdrawal" :loading="loading">
+                    <v-data-table :headers="headers" :items="itemsWithdrawal" :loading="loading" hide-no-data>
                         <template v-slot:item.direction="{ value }">
                             <ArrowUpRight v-if="value === 'deposit'" />
                             <ArrowDownLeft v-if="value === 'withdrawal'" />
@@ -559,10 +559,10 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
     </v-btn>
   </RenderOn>
   
-  <section v-if="!loading && itemsAll.length === 0 && !hasItems" class="tw-flex tw-flex-col tw-justify-center tw-items-center tw-w-full tw-h-[calc(100vh-400px)]">
+  <section v-if="!loading && itemsAll.length === 0" class="tw-flex tw-flex-col tw-justify-center tw-items-center tw-w-full tw-h-[calc(100vh-400px)]">
     <div class="tw-text-center">
         <Stars /><br>
-        <span class="tw-text-lg tw-text-[#677483] tw-font-semibold">Операции отстутствуют</span>
+        <span class="tw-text-lg tw-text-[#677483] tw-font-semibold">Операции отсутствуют</span>
     </div>
   </section>
 

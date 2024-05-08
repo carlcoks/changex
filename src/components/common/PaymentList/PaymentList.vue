@@ -18,7 +18,7 @@ const props = defineProps<{
 }>()
 
 const paymentsStore = usePaymentsStore()
-const { hasItems, loading, paymentsItemsAll, lastPage } = storeToRefs(paymentsStore)
+const { loading, paymentsItemsAll, lastPage } = storeToRefs(paymentsStore)
 
 const cardsStore = useCardsStore()
 const { itemsAll } = storeToRefs(cardsStore)
@@ -387,8 +387,8 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                 </section>
             </section>
         </v-card>
-        <v-card v-if="hasItems" class="!tw-rounded-2xl tw-mb-6">
-            <v-data-table :headers="headers" :items="paymentsItemsAll" :footer="false" :loading="loading">
+        <v-card class="!tw-rounded-2xl tw-mb-6">
+            <v-data-table :headers="headers" :items="paymentsItemsAll" :footer="false" :loading="loading" hide-no-data>
                 <template v-slot:headers="{ columns }">
                     <tr>
                         <template v-for="column in columns" :key="column.key">
@@ -708,7 +708,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
             </v-card>
     </RenderOn>
 
-    <section v-if="!loading && paymentsItemsAll.length === 0 && !hasItems" class="tw-flex tw-flex-col tw-justify-center tw-items-center tw-w-full tw-h-[calc(100vh-400px)]">
+    <section v-if="!loading && paymentsItemsAll.length === 0" class="tw-flex tw-flex-col tw-justify-center tw-items-center tw-w-full tw-h-[calc(100vh-400px)]">
         <div class="tw-text-center">
             <Stars /><br>
             <span class="tw-text-lg tw-text-[#677483] tw-font-semibold">Платежи отсутствуют</span>

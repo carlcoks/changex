@@ -35,7 +35,7 @@ const searchModel = ref('')
 const searchQuery = ref('')
 
 const devicesStore = useDevicesStore()
-const { loading, hasItems, deviceItemsAll, qr, isTempTokenGet, lastPage } = storeToRefs(devicesStore)
+const { loading, deviceItemsAll, qr, isTempTokenGet, lastPage } = storeToRefs(devicesStore)
 
 const userStore = useUserStore()
 const { apkUrl } = storeToRefs(userStore)
@@ -282,8 +282,9 @@ onUnmounted(() => {
                 </section>
             </section>
         </v-card>
-        <v-card v-if="hasItems" class="!tw-rounded-2xl tw-mb-6">
-            <v-data-table :headers="headers" :items="deviceItemsAll" :footer="false" :loading="loading">
+
+        <v-card class="!tw-rounded-2xl tw-mb-6">
+            <v-data-table :headers="headers" :items="deviceItemsAll" :footer="false" :loading="loading" hide-no-data>
                 <template v-slot:headers="{ columns }">
                     <tr>
                         <template v-for="column in columns" :key="column.key">
@@ -429,7 +430,7 @@ onUnmounted(() => {
             </v-btn>
     </RenderOn>
 
-    <section v-if="!loading && deviceItemsAll.length === 0 && !hasItems" class="tw-flex tw-flex-col tw-justify-center tw-items-center tw-w-full tw-h-[calc(100vh-400px)]">
+    <section v-if="!loading && deviceItemsAll.length === 0" class="tw-flex tw-flex-col tw-justify-center tw-items-center tw-w-full tw-h-[calc(100vh-400px)]">
         <div class="tw-text-center">
             <Stars /><br>
             <span class="tw-text-lg tw-text-[#677483] tw-font-semibold">Устройства отсутствуют</span>
