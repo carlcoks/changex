@@ -244,8 +244,8 @@ function fetchData() {
 }
 
 const sort = reactive({
-    value: '',
-    name: 'Не сортировать'
+    value: 'timestamp',
+    name: 'Времени'
 })
 
 const sortOptions = ref([
@@ -638,48 +638,11 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                             <template v-slot:headers="{ columns }">
                                 <tr>
                                     <template v-for="column in columns" :key="column.key">
-                                        <td
-                                            class="tw-cursor-pointer"
-                                            @click="() => setSort(column.sortParams)"
-                                        >
+                                        <td>
                                             <span
                                                 class="tw-text-[13px] tw-text-[#677483] tw-mr-2"
                                                 >{{ column.title }}</span
                                             >
-                                            {{ column.sort }}
-                                            <template v-if="column.sortable">
-                                                <template
-                                                    v-if="column.sortParams.value === sort.value"
-                                                >
-                                                    <svg
-                                                        style="transform: rotate(180deg)"
-                                                        width="11"
-                                                        height="7"
-                                                        viewBox="0 0 11 7"
-                                                        fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                    >
-                                                        <path
-                                                            d="M10.621 0.943362C10.5852 0.858049 10.5249 0.785259 10.4477 0.734166C10.3706 0.683073 10.28 0.655963 10.1875 0.656252H0.812455C0.719912 0.655963 0.629354 0.683073 0.552193 0.734166C0.475032 0.785259 0.414721 0.858049 0.378861 0.943362C0.345089 1.02994 0.336522 1.12432 0.35415 1.21557C0.371777 1.30682 0.41488 1.39121 0.47847 1.45899L5.16597 6.14649C5.25557 6.23312 5.37532 6.28155 5.49995 6.28155C5.62459 6.28155 5.74434 6.23312 5.83394 6.14649L10.5214 1.45899C10.585 1.39121 10.6281 1.30682 10.6458 1.21557C10.6634 1.12432 10.6548 1.02994 10.621 0.943362Z"
-                                                            fill="#677483"
-                                                        />
-                                                    </svg>
-                                                </template>
-                                                <template v-else>
-                                                    <svg
-                                                        width="11"
-                                                        height="7"
-                                                        viewBox="0 0 11 7"
-                                                        fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                    >
-                                                        <path
-                                                            d="M10.621 0.943362C10.5852 0.858049 10.5249 0.785259 10.4477 0.734166C10.3706 0.683073 10.28 0.655963 10.1875 0.656252H0.812455C0.719912 0.655963 0.629354 0.683073 0.552193 0.734166C0.475032 0.785259 0.414721 0.858049 0.378861 0.943362C0.345089 1.02994 0.336522 1.12432 0.35415 1.21557C0.371777 1.30682 0.41488 1.39121 0.47847 1.45899L5.16597 6.14649C5.25557 6.23312 5.37532 6.28155 5.49995 6.28155C5.62459 6.28155 5.74434 6.23312 5.83394 6.14649L10.5214 1.45899C10.585 1.39121 10.6281 1.30682 10.6458 1.21557C10.6634 1.12432 10.6548 1.02994 10.621 0.943362Z"
-                                                            fill="#677483"
-                                                        />
-                                                    </svg>
-                                                </template>
-                                            </template>
                                         </td>
                                     </template>
                                 </tr>
@@ -745,48 +708,11 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                             <template v-slot:headers="{ columns }">
                                 <tr>
                                     <template v-for="column in columns" :key="column.key">
-                                        <td
-                                            class="tw-cursor-pointer"
-                                            @click="() => setSort(column.sortParams)"
-                                        >
+                                        <td>
                                             <span
                                                 class="tw-text-[13px] tw-text-[#677483] tw-mr-2"
                                                 >{{ column.title }}</span
                                             >
-                                            {{ column.sort }}
-                                            <template v-if="column.sortable">
-                                                <template
-                                                    v-if="column.sortParams.value === sort.value"
-                                                >
-                                                    <svg
-                                                        style="transform: rotate(180deg)"
-                                                        width="11"
-                                                        height="7"
-                                                        viewBox="0 0 11 7"
-                                                        fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                    >
-                                                        <path
-                                                            d="M10.621 0.943362C10.5852 0.858049 10.5249 0.785259 10.4477 0.734166C10.3706 0.683073 10.28 0.655963 10.1875 0.656252H0.812455C0.719912 0.655963 0.629354 0.683073 0.552193 0.734166C0.475032 0.785259 0.414721 0.858049 0.378861 0.943362C0.345089 1.02994 0.336522 1.12432 0.35415 1.21557C0.371777 1.30682 0.41488 1.39121 0.47847 1.45899L5.16597 6.14649C5.25557 6.23312 5.37532 6.28155 5.49995 6.28155C5.62459 6.28155 5.74434 6.23312 5.83394 6.14649L10.5214 1.45899C10.585 1.39121 10.6281 1.30682 10.6458 1.21557C10.6634 1.12432 10.6548 1.02994 10.621 0.943362Z"
-                                                            fill="#677483"
-                                                        />
-                                                    </svg>
-                                                </template>
-                                                <template v-else>
-                                                    <svg
-                                                        width="11"
-                                                        height="7"
-                                                        viewBox="0 0 11 7"
-                                                        fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                    >
-                                                        <path
-                                                            d="M10.621 0.943362C10.5852 0.858049 10.5249 0.785259 10.4477 0.734166C10.3706 0.683073 10.28 0.655963 10.1875 0.656252H0.812455C0.719912 0.655963 0.629354 0.683073 0.552193 0.734166C0.475032 0.785259 0.414721 0.858049 0.378861 0.943362C0.345089 1.02994 0.336522 1.12432 0.35415 1.21557C0.371777 1.30682 0.41488 1.39121 0.47847 1.45899L5.16597 6.14649C5.25557 6.23312 5.37532 6.28155 5.49995 6.28155C5.62459 6.28155 5.74434 6.23312 5.83394 6.14649L10.5214 1.45899C10.585 1.39121 10.6281 1.30682 10.6458 1.21557C10.6634 1.12432 10.6548 1.02994 10.621 0.943362Z"
-                                                            fill="#677483"
-                                                        />
-                                                    </svg>
-                                                </template>
-                                            </template>
                                         </td>
                                     </template>
                                 </tr>
@@ -1133,7 +1059,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                 <section
                     class="tw-flex tw-justify-between tw-items-center tw-w-full tw-mb-2 tw-mt-2"
                 >
-                    <div>
+                    <!-- <div>
                         <span class="tw-text-[13px] tw-select-none">
                             Сортировать по
                             <v-menu>
@@ -1159,7 +1085,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                                 </v-list>
                             </v-menu>
                         </span>
-                    </div>
+                    </div> -->
                     <div class="tw-flex tw-items-center tw-cursor-pointer" @click="mobileFilter = !mobileFilter">
                         <span class="tw-text-[13px] tw-text-[#04B6F5] tw-select-none">Фильтр</span>
                         <Filter />
@@ -1235,7 +1161,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
             </v-window-item>
 
             <v-window-item value="two" @group:selected="fetchData">
-                <section
+                <!-- <section
                     class="tw-flex tw-justify-between tw-items-center tw-w-full tw-mb-2 tw-mt-2"
                 >
                     <div>
@@ -1265,7 +1191,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                             </v-menu>
                         </span>
                     </div>
-                </section>
+                </section> -->
                 <section
                     class="tw-flex tw-flex-col tw-gap-y-2 tw-overflow-y-scroll tw-h-[420px]"
                 >

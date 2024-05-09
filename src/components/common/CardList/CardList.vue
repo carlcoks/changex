@@ -26,7 +26,7 @@ const cardErrorSnackbar = reactive({
 
 const cardsStore = useCardsStore()
 const deviceStore = useDevicesStore()
-const { loading, itemsAll, lastPage } = storeToRefs(cardsStore)
+const { bankItems, loading, itemsAll, lastPage } = storeToRefs(cardsStore)
 const { filteredDeviceList } = storeToRefs(deviceStore)
 
 const newCardForm = ref<HTMLFormElement>(null)
@@ -196,12 +196,7 @@ const headers = ref([
 
 const banks = reactive({
     select: undefined,
-    items: [
-        {
-            value: 'sber',
-            name: 'Сбербанк'
-        }
-    ]
+    items: []
 })
 
 const statuses = reactive({
@@ -476,7 +471,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                     <v-responsive class="mx-auto" min-width="92" max-width="462">
                         <v-select
                             v-model="banks.select"
-                            :items="banks.items"
+                            :items="bankItems"
                             label="Все банки"
                             variant="outlined"
                             item-title="name"
@@ -1076,7 +1071,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                     <div class="tw-flex tw-flex-col tw-items-start tw-w-full">
                         <v-select
                             v-model="banks.select"
-                            :items="banks.items"
+                            :items="bankItems"
                             label="Все банки"
                             class="tw-w-full"
                             variant="outlined"

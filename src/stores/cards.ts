@@ -4,24 +4,24 @@ import type { TFilterPaginationOptions } from '@/types'
 
 export const useCardsStore = defineStore('cards', {
   state: () => ({
-    banks: [
-        {
-            slug: 'sber',
-            name: 'Сбербанк'
-        },
-        {
-            slug: 'raiff',
-            name: 'Райфайзен'
-        },
-        {
-            slug: 'tinkoff',
-            name: 'Тинькофф'
-        },
-        {
-            slug: 'alpha',
-            name: 'Альфбанк'
-        }
-    ],
+    // banks: [
+    //     {
+    //         slug: 'sber',
+    //         name: 'Сбербанк'
+    //     },
+    //     {
+    //         slug: 'raiff',
+    //         name: 'Райфайзен'
+    //     },
+    //     {
+    //         slug: 'tinkoff',
+    //         name: 'Тинькофф'
+    //     },
+    //     {
+    //         slug: 'alpha',
+    //         name: 'Альфбанк'
+    //     }
+    // ],
     bankList: [],
     cardsList: [] as any,
     loading: true,
@@ -34,7 +34,7 @@ export const useCardsStore = defineStore('cards', {
     itemsAll: (state) => {
         return state.cardsList.map((item) => {
             const switchStatus = item.status === 'active' ? true : false
-            const bankName = state.banks.find((bank) => bank.slug === item.bank).name
+            const bankName = state.bankList.find((bank) => bank.value === item.bank).name
             const pan = item.pan.slice(12, 16)
 
             return {
