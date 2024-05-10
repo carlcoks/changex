@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import { onMounted, reactive, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { debounce } from 'vue-debounce'
+
+import VueCountdown from '@chenfengyuan/vue-countdown'
 import Datepicker, { type DatePickerInstance } from '@vuepic/vue-datepicker'
 import '@vuepic/vue-datepicker/dist/main.css'
-import { useBidsStore } from '@/stores/bids'
-import { useRoute } from 'vue-router'
+
 import { storeToRefs } from 'pinia'
+import { useBidsStore } from '@/stores/bids'
+
 import { datetimeToTimestamp, formatter } from '@/utils'
 import RenderOn from '@/components/utils/RenderOn.vue'
 import Stars from '@/components/icons/Stars.vue'
-import VueCountdown from '@chenfengyuan/vue-countdown'
 import ReloadBtn from '../ReloadBtn/ReloadBtn.vue'
 import Download from '@/components/icons/Download.vue'
 import WarningCircle from '@/components/icons/WarningCircle.vue'
@@ -160,8 +163,8 @@ const methods = reactive({
     select: undefined,
     items: [
         {
-            value: 'someMethod',
-            name: 'Some Method'
+            value: 'Карта',
+            name: 'Карта'
         }
     ]
 })

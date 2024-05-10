@@ -228,12 +228,7 @@ const newCard = reactive<{
 }>({
     bank: {
         select: undefined,
-        items: [
-            {
-                value: 'sber',
-                name: 'Сбербанк'
-            }
-        ]
+        items: []
     },
     device: {
         select: undefined,
@@ -506,7 +501,12 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                         </div>
                     </v-responsive>
                 </section>
-                <v-btn class="!-tw-mt-5 !tw-rounded-xl !tw-w-[205px] !tw-h-[52px] hover:!tw-shadow-[0px_10px_18px_2px_rgba(4,182,245,0.2)]" color="#04B6F5" variant="elevated" @click="dialog = !dialog">
+                <v-btn
+                    class="!-tw-mt-5 !tw-rounded-xl !tw-w-[205px] !tw-h-[52px] hover:!tw-shadow-[0px_10px_18px_2px_rgba(4,182,245,0.2)]"
+                    color="#04B6F5"
+                    variant="elevated"
+                    @click="dialog = !dialog"
+                >
                     <template v-slot:prepend>
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M3.125 10H16.875" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
@@ -760,7 +760,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                         <span class="tw-text-[13px] tw-text-[#677483] tw-mb-2">Банк</span>
                         <v-select
                             v-model="newCard.bank.select"
-                            :items="newCard.bank.items"
+                            :items="bankItems"
                             item-title="name"
                             item-value="value"
                             class="tw-w-full"
@@ -955,7 +955,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                         <span class="tw-text-[13px] tw-text-[#677483] tw-mb-2">Банк</span>
                         <v-select
                             v-model="newCard.bank.select"
-                            :items="newCard.bank.items"
+                            :items="bankItems"
                             item-title="name"
                             item-value="value"
                             class="tw-w-full"
