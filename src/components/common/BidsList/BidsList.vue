@@ -87,6 +87,11 @@ const headersAll = ref([
         key: 'sumUSDT'
     },
     {
+        title: 'Причина',
+        sortable: false,
+        key: 'rejectReason'
+    },
+    {
         title: '',
         sortable: false,
         key: 'bidTake'
@@ -140,6 +145,11 @@ const headersUser = ref([
         key: 'sumUSDT'
     },
     {
+        title: 'Причина',
+        sortable: false,
+        key: 'rejectReason'
+    },
+    {
         title: 'Дата',
         sortable: true,
         sortParams: {
@@ -166,6 +176,20 @@ const methods = reactive({
             value: 'Карта',
             name: 'Карта'
         }
+    ]
+})
+
+const reasons = reactive({
+    select: null,
+    items: [
+        {
+            value: null,
+            name: 'Без причины',
+        },
+        {
+            value: 'do_not_allow',
+            name: 'Невозможно перевести на карту',
+        },
     ]
 })
 
@@ -428,7 +452,7 @@ const confirmBidTake = async (id: string) => {
 const confirmBidCancel = async (id: string) => {
     isLoadingBtn.value = true
 
-    await bidsStore.cancelUserBidByID(id)
+    await bidsStore.cancelUserBidByID(id, reasons.select)
 
     isLoadingBtn.value = false
 
@@ -675,6 +699,11 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                                     <span class="tw-ml-2 tw-text-[13px] tw-text-gray-dark">USDT</span></span
                                 >
                             </template>
+                            <template v-slot:item.rejectReason="{ value }">
+                                <span class="tw-text-[13px] tw-text-[#677483]">
+                                    {{ value === 'do_not_allow' ? 'Невозможно перевести на карту' : '' }}
+                                </span>
+                            </template>
                             <template v-slot:item.bidTake="{ value, index }">
                                 <div class="tw-p-2 tw-cursor-pointer hover:tw-scale-110" @click="openOnTakeBid(bidsItemsAll[index])">
                                     <svg
@@ -742,6 +771,11 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                                     }}</span>
                                     <span class="tw-ml-2 tw-text-[13px] tw-text-gray-dark">USDT</span></span
                                 >
+                            </template>
+                            <template v-slot:item.rejectReason="{ value }">
+                                <span class="tw-text-[13px] tw-text-[#677483]">
+                                    {{ value === 'do_not_allow' ? 'Невозможно перевести на карту' : '' }}
+                                </span>
                             </template>
                             <template v-slot:item.date="{ value }">
                                 <span class="tw-text-[15px]">{{ value.value }}</span
@@ -1014,6 +1048,15 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                         tw-rounded-xl tw-p-4 tw-w-full tw-mb-5 tw-mt-3">
                     <span>{{ bidOnCancel.requisites }}</span>
                 </div>
+                <span>Причина:</span>
+                <v-select
+                    v-model="reasons.select"
+                    :items="reasons.items"
+                    item-title="name"
+                    item-value="value"
+                    class="tw-w-full"
+                    variant="outlined"
+                ></v-select>
             </section>
             <div v-else class="tw-flex tw-flex-col tw-items-center tw-justify-center tw-gap-y-4 tw-bg-[#F8FCFE]
                     tw-border-solid tw-border-[1px] tw-border-[#E0E4E8]

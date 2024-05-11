@@ -738,9 +738,9 @@ export const getUserBids = async (options: TFilterPaginationOptions) => {
     }
 }
 
-export const cancelUserBid = async (uid: string) => {
+export const cancelUserBid = async (uid: string, obj) => {
     try {
-        return await $authHost.post(`/bids/${uid}/cancel`, {})
+        return await $authHost.post(`/bids/${uid}/cancel`, obj)
     } catch (error) {
         if (error.response.data.code === 'jwt_error') {
             if (localStorage.getItem('refreshToken')) {

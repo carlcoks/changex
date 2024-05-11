@@ -119,8 +119,16 @@ export const useBidsStore = defineStore('bids', {
       return res
     },
 
-    async cancelUserBidByID(id: string) {
-      const res = await cancelUserBid(id)
+    async cancelUserBidByID(id: string, reason: string | null = null) {
+      let obj = {}
+
+      if (reason) {
+        obj = {
+          rejectReason: reason
+        }
+      }
+
+      const res = await cancelUserBid(id, obj)
       this.bidsUserList = this.bidsUserList.filter((bid) => bid.uid !== id)
     },
 
