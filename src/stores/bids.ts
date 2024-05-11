@@ -23,7 +23,8 @@ export const useBidsStore = defineStore('bids', {
               methodBank: item.bank
             },
             paymentSum: item.amount,
-            sumUSDT: item.amountUSD
+            sumUSDT: item.amountUSD,
+            rejectReason: item.rejectReason,
         }
       })
     },
@@ -38,6 +39,7 @@ export const useBidsStore = defineStore('bids', {
             requisites: item.requisites,
             paymentSum: item.amount,
             sumUSDT: item.amountUSD,
+            rejectReason: item.rejectReason,
             date: {
                 value: item.takenTimestamp ? timestampToDatetime(item.takenTimestamp as number) : '',
                 different: getDifferentTimeStatus(item.takenTimestamp as string)

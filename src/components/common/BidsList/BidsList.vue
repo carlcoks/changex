@@ -701,7 +701,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                             </template>
                             <template v-slot:item.rejectReason="{ value }">
                                 <span class="tw-text-[13px] tw-text-[#677483]">
-                                    {{ value === 'do_not_allow' ? 'Невозможно перевести на карту' : '' }}
+                                    {{ value === 'do_not_allow' ? 'Невозможно перевести на карту' : '-' }}
                                 </span>
                             </template>
                             <template v-slot:item.bidTake="{ value, index }">
@@ -774,7 +774,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                             </template>
                             <template v-slot:item.rejectReason="{ value }">
                                 <span class="tw-text-[13px] tw-text-[#677483]">
-                                    {{ value === 'do_not_allow' ? 'Невозможно перевести на карту' : '' }}
+                                    {{ value === 'do_not_allow' ? 'Невозможно перевести на карту' : '-' }}
                                 </span>
                             </template>
                             <template v-slot:item.date="{ value }">
@@ -1146,7 +1146,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                         >
                             <div class="tw-flex tw-justify-between tw-mb-2">
                                 <div class="tw-flex tw-items-center tw-gap-x-2 tw-w-full">
-                                    <div class="tw-flex tw-flex-col tw-gap-y-2 tw-w-full tw-leading-4">
+                                    <div class="tw-flex tw-flex-col tw-gap-y-4 tw-w-full tw-leading-4">
                                         <div class="tw-flex tw-justify-between tw-items-center tw-w-full">
                                             <span class="tw-text-[10px] tw-text-[#AEB7C1]">{{
                                                 item.id
@@ -1187,8 +1187,27 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                                                 ></span
                                             >
                                         </div>
-                                        <span>{{ item.method.methodValue }}</span><br>
-                                        <span class="tw-text-[15px] tw-text-gray-dark">{{ item.method.methodBank }}</span>
+                                        <div class="tw-flex tw-flex-col tw-gap-y-2 tw-text-[15px]">
+                                            <div class="tw-flex tw-items-center tw-gap-x-1">
+                                                <span class="tw-text-gray-dark">
+                                                    Метод:
+                                                </span>
+                                                <span>
+                                                    {{ item.method.methodValue }}
+                                                </span>
+                                            </div>
+                                            <div class="tw-flex tw-items-center tw-gap-x-1">
+                                                <span class="tw-text-gray-dark">
+                                                    Банк:
+                                                </span>
+                                                <span>
+                                                    {{ item.method.methodBank }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div v-if="item.rejectReason" class="tw-flex tw-flex-col tw-text-[13px]">
+                                            Причина отмены: {{ item.rejectReason === 'do_not_allow' ? 'Невозможно перевести на карту' : '-' }}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
