@@ -103,7 +103,9 @@ export const useCardsStore = defineStore('cards', {
 
         const res = await editCard(uid, onSaveCard)
         
-        if (res && res.data !== undefined && res?.data.card) this.cardsList[idx] = res?.data.card
+        if (res?.data?.card) {
+            this.cardsList[idx] = res.data.card
+        }
 
         return res
     },
@@ -118,11 +120,13 @@ export const useCardsStore = defineStore('cards', {
 
       const res = await getCards(options)
       
-      this.cardsList = res?.data.list
-      this.page = res?.data.page
-      this.offset = res?.data.offset
-      this.totalCount = res?.data.totalCount
-      this.lastPage = res?.data.lastPage
+      if (res?.data) {
+        this.cardsList = res?.data.list
+        this.page = res?.data.page
+        this.offset = res?.data.offset
+        this.totalCount = res?.data.totalCount
+        this.lastPage = res?.data.lastPage
+      }
     },
 
     async loadMoreCards(options: TFilterPaginationOptions) {

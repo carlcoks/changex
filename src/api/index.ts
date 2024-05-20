@@ -324,6 +324,8 @@ export const addCard = async (data: Record<string, unknown>) => {
                 return
             }
         }
+
+        return error
     }
 }
 
@@ -374,9 +376,9 @@ export const editCard = async (uid: string, onSaveCard: Record<string, unknown>)
             } else {
                 return
             }
-        } else {
-            return error
         }
+
+        return error
     }
 }
 

@@ -231,7 +231,7 @@ const newCard = reactive<{
         items: []
     },
     device: {
-        select: 1,
+        select: undefined,
         items: []
     },
     cardNum: '',
@@ -334,38 +334,36 @@ function reset() {
 //     })
 // }
 
-async function submitNewCard() {
+const submitNewCard = async () => {
     const { valid } = await newCardForm.value.validate()
 
     if (valid) {
-        cardsStore.createCard(newCard).then((res) => {
-            cardsStore.hideLoading()
+        const res = await cardsStore.createCard(newCard)
+        cardsStore.hideLoading()
 
-            if (res && res.response && res.response.data && res?.response.data.code === 'incorrect_pan') {
-                cardErrorSnackbar.show = true
-                return
-            }
+        if (res?.response?.data?.status === 'error') {
+            cardErrorSnackbar.show = true
+            return
+        }
 
-            dialogConfirm.value = false
-        })
+        dialogConfirm.value = false
     }
 }
 
-async function submitNewCardMobile() {
+const submitNewCardMobile = async () => {
     const { valid } = await newCardMobileForm.value.validate()
 
     if (valid) {
-        cardsStore.createCard(newCard).then((res) => {
-            cardsStore.hideLoading()
+        const res = await cardsStore.createCard(newCard)
+        cardsStore.hideLoading()
             
-            if (res && res.response && res.response.data && res?.response.data.code === 'incorrect_pan') {
-                cardErrorSnackbar.show = true
-                return
-            }
+        if (res?.response?.data?.status === 'error') {
+            cardErrorSnackbar.show = true
+            return
+        }
 
-            dialogConfirm.value = false
-            dialog.value = false
-        })
+        dialogConfirm.value = false
+        dialog.value = false
     }
 }
 
@@ -376,7 +374,7 @@ async function submitEditCard() {
         cardsStore.saveEditCard(editCard).then((res) => {
             cardsStore.hideLoading()
 
-            if (res && res.response && res.response.data && res?.response.data.code === 'incorrect_pan') {
+            if (res?.response?.data?.status === 'error') {
                 cardErrorSnackbar.show = true
                 return
             }
