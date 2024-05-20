@@ -148,9 +148,14 @@ export const useCardsStore = defineStore('cards', {
             maxDailyOrderSumUSD: Number(newCard.limit.replace(/\s/g, '')),
             comment: newCard.comment
         }
+
         const res = await addCard(createdCard)
 
-        this.cardsList.unshift(res?.data.card)
+        if (res?.data?.card) {
+            this.cardsList.unshift(res?.data.card)
+        }
+
+        return res
     },
 
     async toggleCard(uid: string, isSwitched: boolean) {

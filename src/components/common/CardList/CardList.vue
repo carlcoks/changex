@@ -231,7 +231,7 @@ const newCard = reactive<{
         items: []
     },
     device: {
-        select: undefined,
+        select: 1,
         items: []
     },
     cardNum: '',
@@ -338,8 +338,14 @@ async function submitNewCard() {
     const { valid } = await newCardForm.value.validate()
 
     if (valid) {
-        cardsStore.createCard(newCard).then(() => {
+        cardsStore.createCard(newCard).then((res) => {
             cardsStore.hideLoading()
+
+            if (res && res.response && res.response.data && res?.response.data.code === 'incorrect_pan') {
+                cardErrorSnackbar.show = true
+                return
+            }
+
             dialogConfirm.value = false
         })
     }
@@ -349,8 +355,14 @@ async function submitNewCardMobile() {
     const { valid } = await newCardMobileForm.value.validate()
 
     if (valid) {
-        cardsStore.createCard(newCard).then(() => {
+        cardsStore.createCard(newCard).then((res) => {
             cardsStore.hideLoading()
+            
+            if (res && res.response && res.response.data && res?.response.data.code === 'incorrect_pan') {
+                cardErrorSnackbar.show = true
+                return
+            }
+
             dialogConfirm.value = false
             dialog.value = false
         })
@@ -362,12 +374,13 @@ async function submitEditCard() {
 
     if (valid) {
         cardsStore.saveEditCard(editCard).then((res) => {
+            cardsStore.hideLoading()
+
             if (res && res.response && res.response.data && res?.response.data.code === 'incorrect_pan') {
                 cardErrorSnackbar.show = true
-                cardsStore.hideLoading()
                 return
             }
-            cardsStore.hideLoading()
+
             closeEditDialog()
         })
     }
@@ -384,7 +397,7 @@ function deleteCardAction(id: number | string) {
 }
 
 const newCardValidationRules = reactive({
-    required: (value: string) => !!value || 'Поле обязвательно для заполнения',
+    required: (value: string) => !!value || 'Поле обязательно для заполнения',
     isCardOccupied: async (value: string) => {
         const num = value.replace(/\s/g, '')
         if (num.length === 16) {
@@ -398,7 +411,7 @@ const newCardValidationRules = reactive({
 })
 
 const editCardValidationRules = reactive({
-    required: (value: string) => !!value || 'Поле обязвательно для заполнения',
+    required: (value: string) => !!value || 'Поле обязательно для заполнения',
     isCardOccupied: async (value: string) => {
         const num = value.replace(/\s/g, '')
         if (num.length === 16) {
@@ -820,7 +833,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                                 color="#04B6F5"
                                 variant="elevated"
                                 block
-                                @click="submitNewCard"
+                                @click.prevent="submitNewCard"
                             >
                                 <v-progress-circular
                                     v-if="loading"
@@ -834,7 +847,7 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                                 class="tw-w-[426px] !tw-h-[50px] !tw-rounded-xl !tw-normal-case !tw-m-auto"
                                 color="#04B6F5"
                                 variant="outlined"
-                                @click="closeDialog"
+                                @click.prevent="closeDialog"
                             >
                                 Отмена
                             </v-btn>
@@ -1010,7 +1023,9 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                     </div>
                     <v-card-actions>
                         <section class="tw-flex tw-flex-col tw-gap-y-4">
-                            <v-btn class="tw-w-[326px] !tw-h-[50px] !tw-rounded-xl !tw-normal-case" color="#04B6F5" variant="elevated" block @click="submitNewCardMobile">
+                            <v-btn class="tw-w-[326px] !tw-h-[50px] !tw-rounded-xl !tw-normal-case" color="#04B6F5" variant="elevated" block
+                                @click.prevent="submitNewCardMobile"
+                            >
                                 <v-progress-circular
                                     v-if="loading"
                                     class="tw-mr-3"
@@ -1019,7 +1034,9 @@ watch(props, (newValue: Record<string, boolean>, _prevValue: Record<string, bool
                                 ></v-progress-circular>
                                 <span class="tw-text-white tw-text-[15px] !tw-normal-case">Добавить</span>
                             </v-btn>
-                            <v-btn class="tw-w-[326px] !tw-h-[50px] !tw-rounded-xl !tw-normal-case !tw-m-auto" color="#04B6F5" variant="outlined" @click="closeDialog">
+                            <v-btn class="tw-w-[326px] !tw-h-[50px] !tw-rounded-xl !tw-normal-case !tw-m-auto" color="#04B6F5" variant="outlined"
+                                @click.prevent="closeDialog"
+                            >
                                 Отмена
                             </v-btn>
                         </section>
